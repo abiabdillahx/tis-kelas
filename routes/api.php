@@ -4,8 +4,8 @@ use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/ping', function() {
-    return response() -> json(['message' => 'pong']);
+Route::get('/ping', function () {
+    return response()->json(['message' => 'pong']);
 });
 
 Route::get('/status', function () {
@@ -18,6 +18,11 @@ Route::get('/status', function () {
 // CRUD Student
 Route::post('/students', [StudentController::class, 'store']);
 Route::get('/students', [StudentController::class, 'index']);
+Route::get('/students/search', [StudentController::class, 'search']);
+
+Route::get('/students/{nim}/mata-kuliah', [StudentController::class, 'mataKuliahByStudent']);
+Route::get('/students/{nim}', [StudentController::class, 'show']);
+
 Route::put('/students/{nim}', [StudentController::class, 'update']);
 Route::patch('/students/{nim}', [StudentController::class, 'update']);
 Route::delete('/students/{nim}', [StudentController::class, 'destroy']);

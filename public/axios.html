@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LK3 – Student API Tester</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161920;
+      --border: #2a2d3a;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --get: #22d3ee;
+      --post: #4ade80;
+      --put: #facc15;
+      --patch: #fb923c;
+      --delete: #f87171;
+      --radius: 10px;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+
+    header {
+      max-width: 860px;
+      margin: 0 auto 40px;
+      border-left: 3px solid var(--get);
+      padding-left: 16px;
+    }
+    header h1 { font-size: 2rem; font-weight: 800; }
+    header p  { color: var(--muted); font-size: 0.85rem; margin-top: 4px; font-family: var(--mono); }
+
+    .grid {
+      max-width: 860px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .badge-get    { background: #0e3a42; color: var(--get); }
+    .badge-post   { background: #0e2e1a; color: var(--post); }
+    .badge-put    { background: #3a2e00; color: var(--put); }
+    .badge-patch  { background: #3a1c00; color: var(--patch); }
+    .badge-delete { background: #3a1010; color: var(--delete); }
+
+    .card-title { font-size: 0.95rem; font-weight: 700; }
+
+    .endpoint-label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: #0d0f14;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+
+    label { font-size: 0.78rem; color: var(--muted); }
+
+    input, textarea {
+      width: 100%;
+      background: #0d0f14;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 8px 10px;
+    }
+
+    textarea { min-height: 90px; }
+
+    button {
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+
+    .btn-get    { background: var(--get); }
+    .btn-post   { background: var(--post); }
+    .btn-put    { background: var(--put); }
+    .btn-patch  { background: var(--patch); }
+    .btn-delete { background: var(--delete); }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Student API Tester</h1>
+  <p>LK3 · Muhammad Abi Abdillah · 245150701111027 · TI-A</p>
+</header>
+
+<div class="grid">
+
+  <!-- GET -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge badge-get">GET</span>
+      <span class="card-title">Read All Students</span>
+    </div>
+    <div class="endpoint-label">GET /api/students</div>
+    <button class="btn-get" onclick="doGet()">Send GET</button>
+  </div>
+
+  <!-- POST -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge badge-post">POST</span>
+      <span class="card-title">Create Student</span>
+    </div>
+    <div class="endpoint-label">POST /api/students</div>
+
+    <label>NIM</label>
+    <input id="post-nim">
+
+    <label>Nama</label>
+    <input id="post-nama">
+
+    <label>Mata Kuliah</label>
+    <textarea id="post-mk">[
+{"kode":"CIE61205","nama":"PemWeb","sks":3}
+]</textarea>
+
+    <button class="btn-post" onclick="doPost()">Send POST</button>
+  </div>
+
+  <!-- PUT -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge badge-put">PUT</span>
+      <span class="card-title">Update Student</span>
+    </div>
+    <div class="endpoint-label">PUT /api/students/{nim}</div>
+
+    <input id="put-nim" placeholder="NIM">
+    <input id="put-nama" placeholder="Nama baru">
+    <textarea id="put-mk">[
+{"kode":"COM60015","nama":"MatDis","sks":2}
+]</textarea>
+
+    <button class="btn-put" onclick="doPut()">Send PUT</button>
+  </div>
+
+  <!-- PATCH -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge badge-patch">PATCH</span>
+      <span class="card-title">Partial Update</span>
+    </div>
+    <div class="endpoint-label">PATCH /api/students/{nim}</div>
+
+    <input id="patch-nim" placeholder="NIM">
+    <input id="patch-nama" placeholder="Nama baru">
+
+    <button class="btn-patch" onclick="doPatch()">Send PATCH</button>
+  </div>
+
+  <!-- DELETE -->
+  <div class="card" style="grid-column:1/-1;">
+    <div class="card-header">
+      <span class="badge badge-delete">DELETE</span>
+      <span class="card-title">Delete Student</span>
+    </div>
+    <div class="endpoint-label">DELETE /api/students/{nim}</div>
+
+    <input id="delete-nim" placeholder="NIM">
+
+    <button class="btn-delete" onclick="doDelete()">Send DELETE</button>
+  </div>
+
+</div>
+
+<script>
+const BASE_URL = 'http://localhost:8000/api';
+
+// GET
+async function doGet() {
+  try {
+    const res = await axios.get(`${BASE_URL}/students`);
+    console.log("GET:", res.data);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+}
+
+// POST
+async function doPost() {
+  const nim = document.getElementById('post-nim').value;
+  const nama = document.getElementById('post-nama').value;
+
+  let mk;
+  try { mk = JSON.parse(document.getElementById('post-mk').value); }
+  catch { return console.error("JSON invalid"); }
+
+  try {
+    const res = await axios.post(`${BASE_URL}/students`, { nim, nama, mataKuliah: mk });
+    console.log("POST:", res.data);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+}
+
+// PUT
+async function doPut() {
+  const nim = document.getElementById('put-nim').value;
+  const nama = document.getElementById('put-nama').value;
+
+  let mk;
+  try { mk = JSON.parse(document.getElementById('put-mk').value); }
+  catch { return console.error("JSON invalid"); }
+
+  try {
+    const res = await axios.put(`${BASE_URL}/students/${nim}`, { nama, mataKuliah: mk });
+    console.log("PUT:", res.data);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+}
+
+// PATCH
+async function doPatch() {
+  const nim = document.getElementById('patch-nim').value;
+  const nama = document.getElementById('patch-nama').value;
+
+  const body = {};
+  if (nama) body.nama = nama;
+
+  if (Object.keys(body).length === 0) {
+    return console.error("Isi minimal 1 field");
+  }
+
+  try {
+    const res = await axios.patch(`${BASE_URL}/students/${nim}`, body);
+    console.log("PATCH:", res.data);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+}
+
+// DELETE
+async function doDelete() {
+  const nim = document.getElementById('delete-nim').value;
+
+  try {
+    const res = await axios.delete(`${BASE_URL}/students/${nim}`);
+    console.log("DELETE:", res.data);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+}
+</script>
+
+</body>
+</html>
