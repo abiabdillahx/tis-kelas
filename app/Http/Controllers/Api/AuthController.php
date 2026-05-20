@@ -13,18 +13,21 @@ class AuthController extends Controller
             "name" => "User Cakep",
             "email" => "user@example.com",
             "password" => "password123",
+            "role" => "user",
         ],
         [
             "id" => 2,
             "name" => "Admin Hebat",
             "email" => "admin@example.com",
             "password" => "secret321",
+            "role" => "admin",
         ],
         [
             "id" => 3,
             "name" => "Abi Abdillah",
-            "email" => "abi@example.com",
-            "password" => "loremipsum",
+            "email" => "manager@example.com",
+            "password" => "manager123",
+            "role" => "manager",
         ],
     ];
     public function register(Request $request)
@@ -83,6 +86,7 @@ class AuthController extends Controller
         $token = JWTAuth::claims([
             "email" => $user->email,
             "name" => $user->name,
+            "role" => $userData["role"],
         ])->fromUser($user);
         return response()->json([
             "message" => "Login successful (dummy)",
@@ -113,6 +117,7 @@ class AuthController extends Controller
                 "user" => [
                     "email" => $payload->get("email"),
                     "name" => $payload->get("name"),
+                    "role" => $payload->get("role"),
                 ],
             ]);
         } catch (JWTException $e) {
